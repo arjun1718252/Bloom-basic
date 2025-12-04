@@ -1,0 +1,1 @@
+BloomMap v5.5 Ultimate Edition. Outer ring spins ONLY while timer runs. Add-subject UI added. Open index.html in browser.

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BloomMap — Payment</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="container">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div>
+      <h1>Payment</h1>
+      <div id="welcomeP" class="small muted"></div>
+    </div>
+
+    <div class="nav">
+      <a href="dashboard.html" class="link">Dashboard</a>
+      <a href="analytics.html" class="link">Analytics</a>
+    </div>
+  </div>
+
+  <!-- Payment Box -->
+  <div class="card payment-card">
+
+    <h4>Select Plan</h4>
+
+    <select id="planSelect" class="input" style="width:200px;margin-top:6px;">
+      <option value="199">BloomMap+ — ₹299</option>
+      <option value="499">Bloom Premium — ₹499</option>
+    </select>
+
+    <p class="small" style="margin-top:10px;">
+      Your Bloom Seeds: <strong id="seedBalance">0</strong>
+    </p>
+
+    <label style="margin-top:12px;" class="small">
+      Plan Amount (₹):
+      <input id="origAmount" type="number" min="1" value="199" style="width:140px;margin-left:8px;">
+    </label>
+
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button id="applyDiscount" class="btn primary">Apply 15% Discount</button>
+      <button id="goOrder" class="btn secondary">Proceed to Pay</button>
+    </div>
+
+    <p id="payInfo" class="small muted" style="margin-top:10px;"></p>
+
+  </div>
+</div>
+
+<div id="toastArea" class="toast-container"></div>
+
+<script src="app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ✅ Load state or assign default
+  let state = JSON.parse(localStorage.getItem("bloommap_dashboard_state"));
+
+  if (!state) {
+    // ✅ First-time: give 1000 seeds + create proper structure
+    state = {
+      seeds: 1000,
+      mapTiles: Array(31).fill(false),
+      subjects: [],
+      sessions: []
+    };
+    localStorage.setItem("bloommap_dashboard_state", JSON.stringify(state));
+  }
+
+  document.getElementById("seedBalance").textContent = state.seeds;
+
+  document.getElementById("planSelect").addEventListener("change", (e) => {
+    document.getElementById("origAmount").value = e.target.value;
+  });
+
+});
+
+document.getElementById("applyDiscount").onclick = () => {
+  let state = JSON.parse(localStorage.getItem("bloommap_dashboard_state"));
+  const amt = Number(document.getElementById("origAmount").value);
+  const discount = Math.round(amt * 0.20);
+
+  if (state.seeds < discount) {
+    window.BloomMap.toast("Not enough Bloom Seeds ❌", "error");
+    return;
+  }
+
+  state.seeds -= discount;
+  localStorage.setItem("bloommap_dashboard_state", JSON.stringify(state));
+  document.getElementById("seedBalance").textContent = state.seeds;
+
+  const final = amt - discount;
+  const plan = document.getElementById("planSelect").selectedOptions[0].textContent;
+
+  localStorage.setItem("bloommap_order", JSON.stringify({
+    plan,
+    original: amt,
+    discount,
+    final
+  }));
+
+  document.getElementById("payInfo").textContent =
+    `✅ Discount Applied: -₹${discount} → Final Price: ₹${final}`;
+};
+
+document.getElementById("goOrder").onclick = () => {
+  window.location.href = "order.html";
+};
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BloomMap — Sign In</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="center-screen sign-view">
+    <div class="card sign-card">
+
+      <!-- 🌸 App Logo -->
+      <img src="logo.png" alt="BloomMap logo" 
+           style="width:70px;height:70px;border-radius:14px;
+                  margin-bottom:10px;object-fit:contain;">
+      
+      <h1 class="logo">BloomMap</h1>
+      <p class="tag">Grow Your Calm & Focus.</p>
+      
+      <!-- 🌿 Input -->
+      <input id="nameInput" type="text" placeholder="Your name" />
+      
+      <!-- 🌱 Start Button -->
+      <div style="margin-top:12px;">
+        <button id="startBtn" class="btn primary">Start Blooming 🌱</button>
+      </div>
+      
+      <!-- 💬 Random Quote -->
+      <p id="quoteText" class="small muted" style="margin-top:10px; font-style:italic;">
+        “Focus is the seed; consistency is the water. Bloom every day.” 🌸
+      </p>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // ✅ START BUTTON LOGIC FIXED
+    document.getElementById('startBtn').addEventListener('click', () => {
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) {
+        window.BloomMap.toast('Please enter your name', 'error');
+        return;
+      }
+
+      // ✅ Save user in the CORRECT storage key dashboard reads
+      localStorage.setItem("bloommap_user_profile", JSON.stringify({ name }));
+
+      // ✅ CLEAR OLD KEYS (prevent conflict)
+      localStorage.removeItem("bloommap_local_user_v1");
+      localStorage.removeItem("bloom_user");
+
+      // ✅ Redirect to dashboard
+      window.location.href = "dashboard.html";
+    });
+
+    // Press Enter to start
+    document.getElementById('nameInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('startBtn').click();
+    });
+
+    // 🌿 Random Quote System
+    const quotes = [
+      "“Focus is the seed; consistency is the water. Bloom every day.” 🌱",
+      "“Small steps daily create big blooms tomorrow.” 🌸",
+      "“Your growth is your greatest masterpiece.” 🌿",
+      "“Discipline turns effort into elegance.” 🌼",
+      "“Every focused minute plants a seed of success.” 🌻"
+    ];
+    document.getElementById("quoteText").textContent =
+      quotes[Math.floor(Math.random() * quotes.length)];
+  </script>
+</body>
+</html>

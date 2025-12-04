@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Order Summary</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="container">
+
+  <!-- Top -->
+  <div class="topbar">
+    <div>
+      <h1>Order Summary</h1>
+      <div id="welcomeO" class="small muted"></div>
+    </div>
+    <div class="nav">
+      <a href="dashboard.html" class="link">Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <div class="card">
+    <h4>Summary</h4>
+
+    <div id="summaryBox" class="small" style="margin-top:10px;">
+      Loading...
+    </div>
+
+    <div style="margin-top:18px;">
+      <button id="fakePay" class="btn primary">Confirm </button>
+    </div>
+  </div>
+
+</div>
+
+<div id="toastArea" class="toast-container"></div>
+<script src="app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const profile = window.BloomMap.getProfile?.() || JSON.parse(localStorage.getItem("bloommap_user_profile") || "{}");
+  if (profile.name) document.getElementById("welcomeO").textContent = `Hey ${profile.name} 👋`;
+
+  const order = JSON.parse(localStorage.getItem("bloommap_order") || "{}");
+
+  if (!order || !order.final) {
+    document.getElementById("summaryBox").innerHTML = "<span class='muted'>No order found.</span>";
+    return;
+  }
+
+  document.getElementById("summaryBox").innerHTML = `
+    <div><strong>Plan:</strong> ${order.plan || "N/A"}</div>
+    <div>Original Price: ₹${order.original}</div>
+    <div>Discount Applied: ₹${order.discount}</div>
+    <div style="font-weight:700;margin-top:8px;font-size:1.1rem;">
+      Final Payable: ₹${order.final}
+    </div>
+  `;
+
+  document.getElementById("fakePay").onclick = () => {
+    window.BloomMap.toast("✅ Payment Successful (Demo)", "success");
+
+    // ✅ Mark Premium Status (so dashboard can unlock new theme / group study)
+    const user = JSON.parse(localStorage.getItem("bloommap_user_profile") || "{}");
+    user.isPremium = true;
+    localStorage.setItem("bloommap_user_profile", JSON.stringify(user));
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 900);
+  };
+});
+</script>
+
+</body>
+</html>

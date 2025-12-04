@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BloomMap — Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div class="container">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="logo.png" alt="BloomMap logo">
+      <h1>BloomMap</h1>
+    </div>
+    <div class="nav">
+      <a href="analytics.html" class="link">Analytics</a>
+      <a href="payment.html" class="link">Payment</a>
+      <button id="signOut" class="btn secondary">Sign Out</button>
+    </div>
+  </div>
+
+  <!-- Timer Card -->
+  <div class="card timer-card">
+    <div class="huge-timer-wrap">
+
+      <!-- Greeting -->
+      <h3 id="greetText"
+      style="font-family:'Brush Script MT', cursive;font-size:2em;text-shadow:0 0 10px #ffbf66;">
+        Hey 👋
+      </h3>
+
+      <!-- BIG TIMER -->
+      <div class="circle-timer-large" id="timerWrap">
+
+        <!-- ✅ GOLDEN LIQUID FILL -->
+        <div id="liquidFill"></div>
+
+        <svg width="420" height="420">
+          <circle cx="210" cy="210" r="190" stroke="#ffffff22" stroke-width="14" fill="none"/>
+          <circle id="ringProg" cx="210" cy="210" r="190" stroke="#ffbf66"
+                  stroke-width="14" fill="none" stroke-linecap="round"
+                  stroke-dasharray="1193.8" stroke-dashoffset="1193.8"/>
+        </svg>
+
+        <div class="time-center-large">
+          <div id="timeDisplay" class="time-xxl">00:00:00</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Controls -->
+    <div class="timer-controls-large">
+
+      <!-- Subject -->
+      <div style="display:flex;gap:8px;">
+        <select id="subjectSelect"></select>
+        <button id="addSubjectBtn" class="btn secondary">+ Add</button>
+      </div>
+
+      <!-- Topic -->
+      <div style="display:flex;gap:8px;">
+        <select id="topicSelect"></select>
+        <button id="addTopicBtn" class="btn secondary">+ Topic</button>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button id="startTimer" class="btn primary">Start</button>
+        <button id="pauseTimer" class="btn secondary">Pause</button>
+        <button id="resetTimer" class="btn secondary">Reset</button>
+        <button id="saveSession" class="btn secondary">Save</button>
+      </div>
+
+      <div id="statusMessage" class="small muted" style="text-align:center;">Ready to start.</div>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div class="card map-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <h3>Monthly Bloom Map</h3>
+        <div class="small muted" id="mapProgress">0 / 31 days bloomed</div>
+      </div>
+
+      <div class="seeds-box">
+        <!-- default display changed to 500 -->
+        <div id="seedsDisplay" class="seeds-count">500</div>
+        <div class="small">Bloom Seeds</div>
+      </div>
+    </div>
+
+    <div id="mapGrid" class="mapgrid-31"></div>
+
+  </div>
+
+  <!-- History -->
+  <div class="card">
+    <h4>Session History</h4>
+    <div id="sessionsList" class="sessions-list">
+      <div class="small muted">No sessions yet</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Ensure seeds display defaults to 1000 immediately (in case stored state is empty)
+  const seedsEl = document.getElementById("seedsDisplay");
+  if (seedsEl) seedsEl.textContent = "1000";
+
+  // Initialize dashboard (this may overwrite display if app.js has saved state)
+  window.BloomMap.initDashboard();
+
+  // ✅ Load user name for greeting
+  const user = JSON.parse(localStorage.getItem("bloommap_user_profile") || "{}");
+  if (user.name) document.getElementById("greetText").textContent = `Hey ${user.name} 👋`;
+});
+
+// ✅ Subject & Topic Add Buttons
+document.getElementById("addSubjectBtn").onclick = () => {
+  const name = prompt("Enter new subject name:");
+  if (name) window.BloomMap.addSubject(name);
+};
+
+document.getElementById("addTopicBtn").onclick = () => {
+  const name = prompt("Enter topic name:");
+  if (name) window.BloomMap.addTopic(name);
+};
+
+// ✅ Timer Buttons
+document.getElementById("startTimer").onclick = () => window.BloomMap.startTimer();
+document.getElementById("pauseTimer").onclick = () => window.BloomMap.pauseTimer();
+document.getElementById("resetTimer").onclick = () => window.BloomMap.resetTimer();
+document.getElementById("saveSession").onclick = () => window.BloomMap.saveSession();
+
+// ✅ Sign Out
+document.getElementById("signOut").onclick = () => {
+  localStorage.removeItem("bloommap_user_profile");
+  window.location.href = "index.html";
+};
+</script>
+
+</body>
+</html>

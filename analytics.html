@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BloomMap — Analytics</title>
+
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <style>
+    .container{max-width:1100px;margin:28px auto;padding:0 18px;}
+    #pieRow{display:flex;align-items:center;gap:18px;justify-content:center;padding:20px;}
+    #pieCanvasWrap{width:300px;height:300px;display:flex;align-items:center;justify-content:center;}
+    #pieChart{width:300px!important;height:300px!important;border-radius:50%;}
+    #lineChart{height:320px!important;}
+    @media(max-width:960px){#pieRow{flex-direction:column;}#pieChart{width:260px!important;height:260px!important;}}
+    #welcomeA{color:#fff;font-weight:700;font-size:1.05rem;margin-left:10px;}
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="topbar">
+    <div>
+      <h1>Analytics</h1>
+      <div id="welcomeA"></div>
+    </div>
+    <div class="nav">
+      <a href="dashboard.html" class="link">Dashboard</a>
+      <a href="payment.html" class="link">Payment</a>
+    </div>
+  </div>
+
+  <div class="card grid-analytics">
+
+    <div>
+      <h4>Total Bloom Seeds (Dashboard)</h4>
+      <div id="totalSeedsA" class="seeds-count">0</div>
+    </div>
+
+    <div>
+      <h4>Focus Distribution</h4>
+      <button id="clearSessionsBtn" class="btn secondary" style="margin-bottom:10px;">Clear saved sessions</button>
+
+      <div id="pieRow">
+        <div id="pieCanvasWrap"><canvas id="pieChart"></canvas></div>
+        <div id="pieText" class="muted"></div>
+      </div>
+    </div>
+
+    <div style="grid-column:1/-1;">
+      <h4>Last 7 Days</h4>
+      <canvas id="lineChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>Top Sessions</h4>
+    <div id="topSessions"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+    if(window.BloomMap && typeof BloomMap.initAnalytics==="function"){
+        BloomMap.initAnalytics();  // LOAD SESSIONS + CHARTS 🔥
+    }
+});
+</script>
+
+<script>
+document.getElementById("clearSessionsBtn").onclick=function(){
+    try{
+        const s=JSON.parse(localStorage.getItem("bloommap_dashboard_state")||"{}");
+        s.sessions=[];
+        localStorage.setItem("bloommap_dashboard_state",JSON.stringify(s));
+        alert("Sessions cleared.");
+        location.reload();
+    }catch(e){alert("Error:"+e);}
+};
+</script>
+
+</body>
+</html>
